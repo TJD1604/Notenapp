@@ -16,6 +16,7 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
+use function PHPUnit\Framework\isEmpty;
 use function PHPUnit\Framework\isNull;
 
 #[Route('/api/grades')]
@@ -38,7 +39,9 @@ class GradeController extends AbstractController
         $grade->setArt($content['art']);
         $grade->setValue($content['value']);
 
-        if(isNull($studentRepository->findOneBy(Array('id' => $content['studentId'])))){
+        $student = $this->normalize($studentRepository->findOneBy(Array('id' => $content['studentId'])));
+
+        if(empty($student)){
             return new Response('Student not found',status: 500);
         }
 
